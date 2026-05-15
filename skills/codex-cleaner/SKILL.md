@@ -9,12 +9,16 @@ Use the bundled script for deterministic cleanup work. Do not manually delete fi
 
 This skill should feel like a simple cleanup assistant. Do not ask non-technical users to type commands. Run the commands yourself, present numbered choices, and let the user reply with numbers such as `2` or `2,3,5`.
 
+## Script Location
+
+The CLI script is bundled at `scripts/codex_cleaner.py` relative to this `SKILL.md`. When running commands, resolve that script relative to the installed skill folder. If the current working directory is not the skill folder, use the script's absolute path.
+
 ## Conversational Workflow
 
-1. Run a scan first:
+1. Run a JSON scan first so you can parse titles and sizes reliably:
 
 ```powershell
-python scripts/codex_cleaner.py scan
+python scripts/codex_cleaner.py scan --json
 ```
 
 2. Summarize the scan as a numbered list. Show only the user-friendly fields by default:
