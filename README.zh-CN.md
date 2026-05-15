@@ -81,6 +81,13 @@ python .\scripts\codex_cleaner.py clean --index 3 --target both
 python .\scripts\codex_cleaner.py clean --index 3 --target both --yes
 ```
 
+一次清理多个编号：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --indexes 2,3,5 --target both
+python .\scripts\codex_cleaner.py clean --indexes 2,3,5 --target both --yes
+```
+
 只清理指定项目目录：
 
 ```powershell
@@ -109,6 +116,14 @@ python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\
 ```text
 $skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
 ```
+
+安装 Skill 后，小白用户可以直接对 Codex 说：
+
+```text
+使用 codex-cleaner 帮我扫描归档对话
+```
+
+Codex 会展示编号列表，用户只需要回复 `2` 或 `2,3,5`。Skill 会要求 Codex 先预览，再确认后清理。
 
 ## 许可证
 

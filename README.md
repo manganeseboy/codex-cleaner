@@ -89,6 +89,13 @@ python .\scripts\codex_cleaner.py clean --index 3 --target both
 python .\scripts\codex_cleaner.py clean --index 3 --target both --yes
 ```
 
+Clean multiple numbered rows:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --indexes 2,3,5 --target both
+python .\scripts\codex_cleaner.py clean --indexes 2,3,5 --target both --yes
+```
+
 Delete only a specific project folder:
 
 ```powershell
@@ -107,6 +114,14 @@ After the repo is published, users can install it from Codex with:
 $skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
 ```
 
+After installing the skill, non-technical users can simply ask Codex:
+
+```text
+Use codex-cleaner to scan my archived conversations.
+```
+
+Codex should show a numbered list, then the user can reply with `2` or `2,3,5`. The skill tells Codex to dry-run first and ask for confirmation before cleaning.
+
 ## Safety model
 
 Codex Cleaner is intentionally conservative:
@@ -118,6 +133,7 @@ Codex Cleaner is intentionally conservative:
 - Workspace deletion is limited to `~/Documents/Codex` by default.
 - The scan warns when multiple archived sessions point at the same workspace.
 - Users can clean by table row number, title keyword, session id, archive file, or direct project path.
+- Multiple rows can be cleaned with `--indexes`, for example `--indexes 2,3,5`.
 
 ## Limitations
 

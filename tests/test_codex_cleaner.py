@@ -249,6 +249,81 @@ class CleanSessionsTest(unittest.TestCase):
             self.assertTrue(project.exists())
             self.assertTrue(archive_file.exists())
 
+    def test_clean_supports_multiple_indexes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / ".codex" / "archived_sessions"
+            archive_dir.mkdir(parents=True)
+            codex_root = tmp_path / "Documents" / "Codex"
+
+            project_one = codex_root / "one"
+            project_two = codex_root / "two"
+            project_one.mkdir(parents=True)
+            project_two.mkdir(parents=True)
+            archive_one = archive_dir / "one.jsonl"
+            archive_two = archive_dir / "two.jsonl"
+            write_session(archive_one, "one", project_one, user_text="First cleanup")
+            write_session(archive_two, "two", project_two, user_text="Second cleanup")
+
+            exit_code = main(
+                [
+                    "--archive-dir",
+                    str(archive_dir),
+                    "--codex-root",
+                    str(codex_root),
+                    "clean",
+                    "--indexes",
+                    "1,2",
+                    "--target",
+                    "archive",
+                    "--yes",
+                    "--permanent",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertFalse(archive_one.exists())
+            self.assertFalse(archive_two.exists())
+            self.assertTrue(project_one.exists())
+            self.assertTrue(project_two.exists())
+
+    def test_clean_multiple_indexes_deduplicates_shared_project(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / ".codex" / "archived_sessions"
+            archive_dir.mkdir(parents=True)
+            codex_root = tmp_path / "Documents" / "Codex"
+            project = codex_root / "shared"
+            project.mkdir(parents=True)
+            (project / "hello.txt").write_text("hello", encoding="utf-8")
+
+            write_session(archive_dir / "one.jsonl", "one", project, user_text="First cleanup")
+            write_session(archive_dir / "two.jsonl", "two", project, user_text="Second cleanup")
+            trash_dir = tmp_path / "Documents" / "Codex_Trash"
+
+            exit_code = main(
+                [
+                    "--archive-dir",
+                    str(archive_dir),
+                    "--codex-root",
+                    str(codex_root),
+                    "--trash-dir",
+                    str(trash_dir),
+                    "clean",
+                    "--indexes",
+                    "1,2",
+                    "--target",
+                    "both",
+                    "--yes",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertFalse(project.exists())
+            self.assertTrue(trash_dir.exists())
+            self.assertEqual(len(list(trash_dir.glob("*_project_shared*"))), 1)
+            self.assertEqual(len(list(trash_dir.glob("*_archive_*.jsonl"))), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

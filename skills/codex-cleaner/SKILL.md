@@ -7,7 +7,9 @@ description: Safely scan and clean local Codex archived sessions and their gener
 
 Use the bundled script for deterministic cleanup work. Do not manually delete files unless the script cannot handle the case.
 
-## Workflow
+This skill should feel like a simple cleanup assistant. Do not ask non-technical users to type commands. Run the commands yourself, present numbered choices, and let the user reply with numbers such as `2` or `2,3,5`.
+
+## Conversational Workflow
 
 1. Run a scan first:
 
@@ -15,9 +17,45 @@ Use the bundled script for deterministic cleanup work. Do not manually delete fi
 python scripts/codex_cleaner.py scan
 ```
 
-2. Explain the matched archived sessions and workspace paths to the user.
+2. Summarize the scan as a numbered list. Show only the user-friendly fields by default:
 
-3. Prefer cleanup by scan table index or title keyword for non-technical users:
+```text
+1. Conversation title
+   Size: 242.2 MB
+   Workspace: C:\Users\...\Documents\Codex\...
+```
+
+3. Ask the user to reply with the number or numbers to clean. Accept formats like:
+
+```text
+2
+2,3,5
+```
+
+4. Convert the user's reply into `--index` or `--indexes`. Always dry-run first:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 2 --target both
+python scripts/codex_cleaner.py clean --indexes 2,3,5 --target both
+```
+
+5. Explain the exact local paths that would be moved or deleted. Ask for confirmation in plain language.
+
+6. Apply only after the user confirms:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 2 --target both --yes
+python scripts/codex_cleaner.py clean --indexes 2,3,5 --target both --yes
+```
+
+7. If the user explicitly asks for permanent deletion, dry-run first, then apply with both `--permanent` and `--yes`:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 2 --target both --permanent
+python scripts/codex_cleaner.py clean --index 2 --target both --permanent --yes
+```
+
+## Advanced Selectors
 
 ```powershell
 python scripts/codex_cleaner.py clean --index 3 --target both
@@ -27,23 +65,10 @@ python scripts/codex_cleaner.py clean --index 3 --target both
 python scripts/codex_cleaner.py clean --title "title keyword" --target both
 ```
 
-4. For cleanup by session id, do a dry run first:
+For cleanup by session id:
 
 ```powershell
 python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both
-```
-
-5. Apply only after the user confirms:
-
-```powershell
-python scripts/codex_cleaner.py clean --index 3 --target both --yes
-```
-
-6. If the user explicitly asks for permanent deletion, dry-run first, then apply with both `--permanent` and `--yes`:
-
-```powershell
-python scripts/codex_cleaner.py clean --index 3 --target both --permanent
-python scripts/codex_cleaner.py clean --index 3 --target both --permanent --yes
 ```
 
 ## Safety Rules
@@ -56,6 +81,7 @@ python scripts/codex_cleaner.py clean --index 3 --target both --permanent --yes
 - Make clear that this removes local logs and files only. It does not delete cloud-side ChatGPT or Codex history.
 - Use the readable Title column when explaining options to the user.
 - English and Chinese title keywords are both supported. Prefer the user's own language when suggesting `--title`.
+- For ordinary users, prefer row numbers over session IDs, archive filenames, or paths.
 
 ## Useful Commands
 
