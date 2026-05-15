@@ -1,0 +1,3 @@
+display_name: Codex Cleaner
+short_description: Review and safely clean local Codex archived sessions and workspace outputs.
+default_prompt: Scan my archived Codex sessions and show which local project folders they created.
