@@ -2,6 +2,8 @@
 
 Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话生成的本地项目文件。
 
+![Codex Cleaner 演示](assets/demo.gif)
+
 它解决的问题很直接：
 
 > 这个归档的 Codex 对话到底生成了哪些本地文件？我能不能放心删掉？

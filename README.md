@@ -2,6 +2,8 @@
 
 Safely review and remove archived Codex sessions together with the local workspace outputs they created.
 
+![Codex Cleaner demo](assets/demo.gif)
+
 Codex Cleaner helps you answer a practical question:
 
 > Which local files belong to this archived Codex conversation, and can I remove them safely?
