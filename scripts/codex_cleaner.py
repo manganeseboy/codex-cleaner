@@ -373,6 +373,8 @@ def clean(args: argparse.Namespace) -> int:
     dry_run = not args.yes
     if dry_run:
         print("Dry run only. Re-run with --yes to apply.")
+    elif args.permanent:
+        print("Permanent deletion enabled. Items will not be moved to trash.")
 
     actions: list[str] = []
     if args.target in ("project", "both") and selected_project:

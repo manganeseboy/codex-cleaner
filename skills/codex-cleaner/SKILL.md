@@ -39,10 +39,18 @@ python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both
 python scripts/codex_cleaner.py clean --index 3 --target both --yes
 ```
 
+6. If the user explicitly asks for permanent deletion, dry-run first, then apply with both `--permanent` and `--yes`:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 3 --target both --permanent
+python scripts/codex_cleaner.py clean --index 3 --target both --permanent --yes
+```
+
 ## Safety Rules
 
 - Prefer moving content to `~/Documents/Codex_Trash`.
 - Use `--permanent` only when the user explicitly asks for permanent deletion.
+- Permanent deletion requires `--permanent --yes` and does not create a trash backup.
 - Keep cleanup limited to `~/Documents/Codex` unless the user explicitly confirms an outside path.
 - Warn when multiple archived sessions point at the same workspace.
 - Make clear that this removes local logs and files only. It does not delete cloud-side ChatGPT or Codex history.

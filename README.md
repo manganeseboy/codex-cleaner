@@ -74,6 +74,13 @@ Actually move it to `Codex_Trash`:
 python .\scripts\codex_cleaner.py clean --session-id 019e25e9-0a03-7b61-bfda-64ad0fa25141 --target both --yes
 ```
 
+Permanently delete instead of moving to `Codex_Trash`:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent
+python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent --yes
+```
+
 For non-technical users, the safest flow is:
 
 ```powershell
@@ -107,6 +114,7 @@ Codex Cleaner is intentionally conservative:
 - `clean` is a dry run unless `--yes` is provided.
 - Default deletion moves files to `~/Documents/Codex_Trash`.
 - Permanent deletion requires `--permanent --yes`.
+- Permanent deletion prints a warning and does not create a trash backup.
 - Workspace deletion is limited to `~/Documents/Codex` by default.
 - The scan warns when multiple archived sessions point at the same workspace.
 - Users can clean by table row number, title keyword, session id, archive file, or direct project path.

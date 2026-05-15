@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.codex_cleaner import scan_sessions
+from scripts.codex_cleaner import main, scan_sessions
 
 
 def write_session(
@@ -179,6 +179,75 @@ class ScanSessionsTest(unittest.TestCase):
             records = scan_sessions(archive_dir)
 
             self.assertEqual(records[0].title, "汇总这个表格")
+
+
+class CleanSessionsTest(unittest.TestCase):
+    def test_permanent_clean_deletes_archive_and_project(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / ".codex" / "archived_sessions"
+            archive_dir.mkdir(parents=True)
+            codex_root = tmp_path / "Documents" / "Codex"
+            project = codex_root / "2026-05-15" / "demo"
+            project.mkdir(parents=True)
+            (project / "hello.txt").write_text("hello", encoding="utf-8")
+            archive_file = archive_dir / "rollout-demo.jsonl"
+            write_session(archive_file, "abc123", project)
+            trash_dir = tmp_path / "Documents" / "Codex_Trash"
+
+            exit_code = main(
+                [
+                    "--archive-dir",
+                    str(archive_dir),
+                    "--codex-root",
+                    str(codex_root),
+                    "--trash-dir",
+                    str(trash_dir),
+                    "clean",
+                    "--index",
+                    "1",
+                    "--target",
+                    "both",
+                    "--yes",
+                    "--permanent",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertFalse(project.exists())
+            self.assertFalse(archive_file.exists())
+            self.assertFalse(trash_dir.exists())
+
+    def test_permanent_clean_without_yes_is_dry_run(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / ".codex" / "archived_sessions"
+            archive_dir.mkdir(parents=True)
+            codex_root = tmp_path / "Documents" / "Codex"
+            project = codex_root / "2026-05-15" / "demo"
+            project.mkdir(parents=True)
+            (project / "hello.txt").write_text("hello", encoding="utf-8")
+            archive_file = archive_dir / "rollout-demo.jsonl"
+            write_session(archive_file, "abc123", project)
+
+            exit_code = main(
+                [
+                    "--archive-dir",
+                    str(archive_dir),
+                    "--codex-root",
+                    str(codex_root),
+                    "clean",
+                    "--index",
+                    "1",
+                    "--target",
+                    "both",
+                    "--permanent",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertTrue(project.exists())
+            self.assertTrue(archive_file.exists())
 
 
 if __name__ == "__main__":

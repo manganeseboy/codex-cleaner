@@ -66,6 +66,13 @@ python .\scripts\codex_cleaner.py clean --session-id 019e25e9 --target both
 python .\scripts\codex_cleaner.py clean --session-id 019e25e9 --target both --yes
 ```
 
+永久删除，不进入 `Codex_Trash`：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent
+python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent --yes
+```
+
 对非专业用户，推荐固定这样用：
 
 ```powershell
@@ -85,6 +92,7 @@ python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\
 - `clean` 默认只是 dry-run，必须加 `--yes` 才会执行。
 - 默认移动到 `~/Documents/Codex_Trash`。
 - 永久删除必须显式加 `--permanent --yes`。
+- 永久删除会显示提示，并且不会生成回收备份。
 - 默认不会删除 `~/Documents/Codex` 之外的项目。
 - 本工具只清理本地文件和本地归档日志，不会删除云端 ChatGPT/Codex 历史。
 - 本工具在本地运行，不会把会话记录或文件内容发送到远程服务。
