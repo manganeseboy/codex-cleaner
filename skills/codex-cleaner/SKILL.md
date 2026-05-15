@@ -47,6 +47,7 @@ python scripts/codex_cleaner.py clean --index 3 --target both --yes
 - Warn when multiple archived sessions point at the same workspace.
 - Make clear that this removes local logs and files only. It does not delete cloud-side ChatGPT or Codex history.
 - Use the readable Title column when explaining options to the user.
+- English and Chinese title keywords are both supported. Prefer the user's own language when suggesting `--title`.
 
 ## Useful Commands
 

@@ -28,7 +28,7 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 python .\scripts\codex_cleaner.py scan
 ```
 
-扫描表会显示 `Title` 列，也就是从对话里的第一条真实用户需求自动生成的可读名称。
+扫描表会显示 `Title` 列，也就是从对话里的第一条真实用户需求自动生成的可读名称。中文和英文对话名称都支持，也会尽量跳过常见的文件上传前缀。
 
 输出 JSON：
 
@@ -46,6 +46,12 @@ python .\scripts\codex_cleaner.py clean --index 3 --target both
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --title "认证机构" --target both
+```
+
+英文关键词也可以：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --title "certification agency" --target both
 ```
 
 按会话 ID 预览清理：

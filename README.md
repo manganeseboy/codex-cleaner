@@ -36,7 +36,7 @@ Scan archived sessions:
 python .\scripts\codex_cleaner.py scan
 ```
 
-The scan table includes a readable `Title` column generated from the conversation's first real user request.
+The scan table includes a readable `Title` column generated from the conversation's first real user request. English and Chinese conversation titles are both supported, including common file-upload preambles.
 
 Show machine-readable JSON:
 
@@ -54,6 +54,12 @@ Preview deleting by title keyword:
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --title "certification agency" --target both
+```
+
+Chinese title keywords work the same way:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --title "认证机构" --target both
 ```
 
 Preview deleting by session id:

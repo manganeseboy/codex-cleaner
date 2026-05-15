@@ -134,6 +134,23 @@ def normalize_title_source(text: str) -> str:
         "## My request for Codex:",
         "## My request:",
         "My request for Codex:",
+        "My request:",
+        "## 我的请求：",
+        "## 我的请求:",
+        "我的请求：",
+        "我的请求:",
+        "## 给 Codex 的请求：",
+        "## 给 Codex 的请求:",
+        "给 Codex 的请求：",
+        "给 Codex 的请求:",
+        "## 给Codex的请求：",
+        "## 给Codex的请求:",
+        "给Codex的请求：",
+        "给Codex的请求:",
+        "## 我对 Codex 的请求：",
+        "## 我对 Codex 的请求:",
+        "我对 Codex 的请求：",
+        "我对 Codex 的请求:",
     )
     for marker in markers:
         if marker in text:

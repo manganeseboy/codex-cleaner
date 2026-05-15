@@ -142,6 +142,44 @@ class ScanSessionsTest(unittest.TestCase):
 
             self.assertEqual(records[0].title, "Summarize this report")
 
+    def test_scan_sessions_supports_english_title_keyword(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / "archived_sessions"
+            archive_dir.mkdir()
+            project = tmp_path / "Documents" / "Codex" / "demo"
+            project.mkdir(parents=True)
+
+            write_session(
+                archive_dir / "rollout-demo.jsonl",
+                "abc123",
+                project,
+                user_text="Create a Windows app for image-based product analysis",
+            )
+
+            records = scan_sessions(archive_dir)
+
+            self.assertEqual(records[0].title, "Create a Windows app for image-based product analysis")
+
+    def test_scan_sessions_supports_chinese_request_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / "archived_sessions"
+            archive_dir.mkdir()
+            project = tmp_path / "Documents" / "Codex" / "demo"
+            project.mkdir(parents=True)
+
+            write_session(
+                archive_dir / "rollout-demo.jsonl",
+                "abc123",
+                project,
+                user_text="# 用户提到的文件：\n\n## 表格: C:/demo/report.xlsx\n\n## 我的请求：\n汇总这个表格",
+            )
+
+            records = scan_sessions(archive_dir)
+
+            self.assertEqual(records[0].title, "汇总这个表格")
+
 
 if __name__ == "__main__":
     unittest.main()
