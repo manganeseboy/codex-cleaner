@@ -67,7 +67,7 @@ The repo includes a Codex skill at:
 After the repo is published, users can install it from Codex with:
 
 ```text
-$skill-installer install https://github.com/YOUR_USER/codex-cleaner/tree/main/skills/codex-cleaner
+$skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
 ```
 
 ## Safety model

@@ -5,10 +5,10 @@
   "author": {
     "name": "Codex Cleaner Contributors",
     "email": "noreply@example.com",
-    "url": "https://github.com/YOUR_USER"
+    "url": "https://github.com/manganeseboy"
   },
-  "homepage": "https://github.com/YOUR_USER/codex-cleaner",
-  "repository": "https://github.com/YOUR_USER/codex-cleaner",
+  "homepage": "https://github.com/manganeseboy/codex-cleaner",
+  "repository": "https://github.com/manganeseboy/codex-cleaner",
   "license": "MIT",
   "keywords": ["codex", "cleanup", "archive", "workspace", "local-files"],
   "skills": "./skills/",
@@ -19,9 +19,9 @@
     "developerName": "Codex Cleaner Contributors",
     "category": "Productivity",
     "capabilities": ["Interactive", "Write"],
-    "websiteURL": "https://github.com/YOUR_USER/codex-cleaner",
-    "privacyPolicyURL": "https://github.com/YOUR_USER/codex-cleaner#privacy",
-    "termsOfServiceURL": "https://github.com/YOUR_USER/codex-cleaner#license",
+    "websiteURL": "https://github.com/manganeseboy/codex-cleaner",
+    "privacyPolicyURL": "https://github.com/manganeseboy/codex-cleaner#privacy",
+    "termsOfServiceURL": "https://github.com/manganeseboy/codex-cleaner#license",
     "defaultPrompt": [
       "Scan my archived Codex sessions.",
       "Show which Codex projects are safe to clean.",

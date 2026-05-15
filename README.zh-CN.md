@@ -68,7 +68,7 @@ python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\
 发布到 GitHub 后，可以这样安装：
 
 ```text
-$skill-installer install https://github.com/YOUR_USER/codex-cleaner/tree/main/skills/codex-cleaner
+$skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
 ```
 
 ## 许可证
