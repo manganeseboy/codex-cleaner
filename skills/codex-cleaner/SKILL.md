@@ -17,16 +17,26 @@ python scripts/codex_cleaner.py scan
 
 2. Explain the matched archived sessions and workspace paths to the user.
 
-3. For cleanup, do a dry run first:
+3. Prefer cleanup by scan table index or title keyword for non-technical users:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 3 --target both
+```
+
+```powershell
+python scripts/codex_cleaner.py clean --title "title keyword" --target both
+```
+
+4. For cleanup by session id, do a dry run first:
 
 ```powershell
 python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both
 ```
 
-4. Apply only after the user confirms:
+5. Apply only after the user confirms:
 
 ```powershell
-python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both --yes
+python scripts/codex_cleaner.py clean --index 3 --target both --yes
 ```
 
 ## Safety Rules
@@ -36,6 +46,7 @@ python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both 
 - Keep cleanup limited to `~/Documents/Codex` unless the user explicitly confirms an outside path.
 - Warn when multiple archived sessions point at the same workspace.
 - Make clear that this removes local logs and files only. It does not delete cloud-side ChatGPT or Codex history.
+- Use the readable Title column when explaining options to the user.
 
 ## Useful Commands
 

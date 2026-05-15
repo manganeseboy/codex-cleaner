@@ -90,21 +90,22 @@ def make_frames() -> list[Image.Image]:
             [
                 ("> codex-cleaner scan", "green"),
                 ("", "text"),
-                ("#   Session   Exists  Size      Files  Shared  Workspace", "blue"),
-                ("--  --------  ------  --------  -----  ------  ------------------------------", "muted"),
-                ("1   019e25e9  yes     242.2 MB  2970   1       ...\\2026-05-14\\windows", "text"),
-                ("2   019e24a6  yes     10.6 KB   2      1       ...\\2026-05-14\\demo-export", "yellow"),
-                ("3   019dce27  yes     17.7 KB   1      1       ...\\2026-04-27\\new-chat", "text"),
+                ("#   Title                         Session   Size      Workspace", "blue"),
+                ("--  ----------------------------  --------  --------  ------------------------------", "muted"),
+                ("1   Build sales image analyzer    019e25e9  242.2 MB  ...\\2026-05-14\\windows", "text"),
+                ("2   Summarize PPE agencies        019e24a6  10.6 KB   ...\\2026-05-14\\demo-export", "yellow"),
+                ("3   Product director workflow     019dce27  17.7 KB   ...\\2026-04-27\\new-chat", "text"),
             ],
-            "Step 2: pick the session or project you no longer need.",
+            "Step 2: pick by readable title or row number.",
         )
     )
 
     frames.append(
         draw_terminal(
             [
-                ("> codex-cleaner clean --session-id 019e24a6 --target both", "green"),
+                ("> codex-cleaner clean --index 2 --target both", "green"),
                 ("", "text"),
+                ("Selected: [2] Summarize PPE agencies", "blue"),
                 ("Dry run only. Re-run with --yes to apply.", "yellow"),
                 ("dry-run: would move to trash:", "muted"),
                 ("  C:\\Users\\you\\Documents\\Codex\\2026-05-14\\demo-export", "text"),
@@ -118,8 +119,9 @@ def make_frames() -> list[Image.Image]:
     frames.append(
         draw_terminal(
             [
-                ("> codex-cleaner clean --session-id 019e24a6 --target both --yes", "green"),
+                ("> codex-cleaner clean --index 2 --target both --yes", "green"),
                 ("", "text"),
+                ("Selected: [2] Summarize PPE agencies", "blue"),
                 ("moved:", "green"),
                 ("  ...\\2026-05-14\\demo-export", "text"),
                 ("  -> C:\\Users\\you\\Documents\\Codex_Trash\\20260515-170000_project_demo-export", "muted"),
@@ -136,10 +138,10 @@ def make_frames() -> list[Image.Image]:
             [
                 ("> codex-cleaner scan", "green"),
                 ("", "text"),
-                ("#   Session   Exists  Size      Files  Shared  Workspace", "blue"),
-                ("--  --------  ------  --------  -----  ------  ------------------------------", "muted"),
-                ("1   019e25e9  yes     242.2 MB  2970   1       ...\\2026-05-14\\windows", "text"),
-                ("2   019dce27  yes     17.7 KB   1      1       ...\\2026-04-27\\new-chat", "text"),
+                ("#   Title                         Session   Size      Workspace", "blue"),
+                ("--  ----------------------------  --------  --------  ------------------------------", "muted"),
+                ("1   Build sales image analyzer    019e25e9  242.2 MB  ...\\2026-05-14\\windows", "text"),
+                ("2   Product director workflow     019dce27  17.7 KB   ...\\2026-04-27\\new-chat", "text"),
                 ("", "text"),
                 ("Local archived log and workspace output cleaned safely.", "green"),
                 ("Cloud-side ChatGPT/Codex history is not changed.", "muted"),

@@ -28,13 +28,27 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 python .\scripts\codex_cleaner.py scan
 ```
 
+扫描表会显示 `Title` 列，也就是从对话里的第一条真实用户需求自动生成的可读名称。
+
 输出 JSON：
 
 ```powershell
 python .\scripts\codex_cleaner.py scan --json
 ```
 
-预览清理某个会话和它的项目目录：
+按表格编号预览清理某个会话和它的项目目录：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --target both
+```
+
+按对话名称关键词预览清理：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --title "认证机构" --target both
+```
+
+按会话 ID 预览清理：
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --session-id 019e25e9 --target both
@@ -44,6 +58,14 @@ python .\scripts\codex_cleaner.py clean --session-id 019e25e9 --target both
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --session-id 019e25e9 --target both --yes
+```
+
+对非专业用户，推荐固定这样用：
+
+```powershell
+python .\scripts\codex_cleaner.py scan
+python .\scripts\codex_cleaner.py clean --index 3 --target both
+python .\scripts\codex_cleaner.py clean --index 3 --target both --yes
 ```
 
 只清理指定项目目录：
@@ -60,6 +82,7 @@ python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\
 - 默认不会删除 `~/Documents/Codex` 之外的项目。
 - 本工具只清理本地文件和本地归档日志，不会删除云端 ChatGPT/Codex 历史。
 - 本工具在本地运行，不会把会话记录或文件内容发送到远程服务。
+- 支持按表格编号、对话名称关键词、会话 ID、归档文件名、项目路径进行清理。
 
 ## Codex Skill 安装
 

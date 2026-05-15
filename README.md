@@ -36,13 +36,27 @@ Scan archived sessions:
 python .\scripts\codex_cleaner.py scan
 ```
 
+The scan table includes a readable `Title` column generated from the conversation's first real user request.
+
 Show machine-readable JSON:
 
 ```powershell
 python .\scripts\codex_cleaner.py scan --json
 ```
 
-Preview deleting one archived session and its workspace:
+Preview deleting one archived session and its workspace by row number:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --target both
+```
+
+Preview deleting by title keyword:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --title "certification agency" --target both
+```
+
+Preview deleting by session id:
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --session-id 019e25e9-0a03-7b61-bfda-64ad0fa25141 --target both
@@ -52,6 +66,14 @@ Actually move it to `Codex_Trash`:
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --session-id 019e25e9-0a03-7b61-bfda-64ad0fa25141 --target both --yes
+```
+
+For non-technical users, the safest flow is:
+
+```powershell
+python .\scripts\codex_cleaner.py scan
+python .\scripts\codex_cleaner.py clean --index 3 --target both
+python .\scripts\codex_cleaner.py clean --index 3 --target both --yes
 ```
 
 Delete only a specific project folder:
@@ -81,6 +103,7 @@ Codex Cleaner is intentionally conservative:
 - Permanent deletion requires `--permanent --yes`.
 - Workspace deletion is limited to `~/Documents/Codex` by default.
 - The scan warns when multiple archived sessions point at the same workspace.
+- Users can clean by table row number, title keyword, session id, archive file, or direct project path.
 
 ## Limitations
 

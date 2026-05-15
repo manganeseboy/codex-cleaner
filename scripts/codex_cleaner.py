@@ -19,6 +19,7 @@ class SessionRecord:
     archive_file: str
     archive_path: str
     session_id: str
+    title: str
     timestamp: str
     cwd: str
     project_exists: bool
@@ -56,7 +57,10 @@ def is_relative_to(child: Path, parent: Path) -> bool:
         return False
 
 
-def read_session_meta(path: Path) -> dict | None:
+def read_session_details(path: Path) -> tuple[dict | None, str]:
+    meta: dict | None = None
+    first_user_text = ""
+
     try:
         with path.open("r", encoding="utf-8") as handle:
             for line in handle:
@@ -64,11 +68,83 @@ def read_session_meta(path: Path) -> dict | None:
                     continue
                 item = json.loads(line)
                 if item.get("type") == "session_meta":
-                    return item.get("payload") or {}
-                return item.get("payload") or {}
+                    meta = item.get("payload") or {}
+                    if first_user_text:
+                        break
+                    continue
+
+                if not first_user_text:
+                    first_user_text = extract_user_text(item)
+                if meta and first_user_text:
+                    break
     except (OSError, json.JSONDecodeError, UnicodeDecodeError):
-        return None
-    return None
+        return None, ""
+
+    return meta, first_user_text
+
+
+def extract_user_text(item: dict) -> str:
+    payload = item.get("payload") or {}
+    if payload.get("type") != "message" or payload.get("role") != "user":
+        return ""
+
+    parts: list[str] = []
+    content = payload.get("content") or []
+    if isinstance(content, str):
+        return content if is_meaningful_user_text(content) else ""
+
+    for part in content:
+        if not isinstance(part, dict):
+            continue
+        if part.get("type") in ("input_text", "text"):
+            text = part.get("text")
+            if isinstance(text, str):
+                parts.append(text)
+    text = " ".join(parts)
+    return text if is_meaningful_user_text(text) else ""
+
+
+def is_meaningful_user_text(text: str) -> bool:
+    normalized = text.strip()
+    if not normalized:
+        return False
+    technical_prefixes = (
+        "<environment_context>",
+        "<image>",
+    )
+    return not normalized.startswith(technical_prefixes)
+
+
+def make_title(meta: dict, first_user_text: str, cwd: str, session_id: str) -> str:
+    explicit = meta.get("title") or meta.get("name") or meta.get("conversation_title")
+    source = normalize_title_source(str(explicit or first_user_text or ""))
+    source = " ".join(source.split())
+
+    if not source and cwd:
+        source = Path(cwd).name
+    if not source:
+        source = session_id[:8] or "Untitled session"
+
+    return truncate(source, 64)
+
+
+def normalize_title_source(text: str) -> str:
+    text = text.strip()
+    markers = (
+        "## My request for Codex:",
+        "## My request:",
+        "My request for Codex:",
+    )
+    for marker in markers:
+        if marker in text:
+            return text.split(marker, 1)[1].strip()
+    return text
+
+
+def truncate(text: str, max_chars: int) -> str:
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3].rstrip() + "..."
 
 
 def dir_stats(path: Path) -> tuple[int, int, int]:
@@ -99,10 +175,11 @@ def scan_sessions(archive_dir: Path) -> list[SessionRecord]:
         return records
 
     for path in sorted(archive_dir.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True):
-        meta = read_session_meta(path)
+        meta, first_user_text = read_session_details(path)
         if not meta:
             continue
 
+        session_id = str(meta.get("id") or "")
         cwd = str(meta.get("cwd") or "")
         cwd_path = Path(cwd) if cwd else Path()
         exists = bool(cwd and cwd_path.exists())
@@ -112,7 +189,8 @@ def scan_sessions(archive_dir: Path) -> list[SessionRecord]:
             SessionRecord(
                 archive_file=path.name,
                 archive_path=str(path),
-                session_id=str(meta.get("id") or ""),
+                session_id=session_id,
+                title=make_title(meta, first_user_text, cwd, session_id),
                 timestamp=str(meta.get("timestamp") or ""),
                 cwd=cwd,
                 project_exists=exists,
@@ -149,12 +227,13 @@ def print_table(records: Iterable[SessionRecord]) -> None:
         print("No archived Codex sessions found.")
         return
 
-    headers = ["#", "Session", "Exists", "Size", "Files", "Shared", "Workspace"]
+    headers = ["#", "Title", "Session", "Exists", "Size", "Files", "Shared", "Workspace"]
     table: list[list[str]] = []
     for index, record in enumerate(rows, start=1):
         table.append(
             [
                 str(index),
+                truncate(record.title, 42),
                 record.session_id[:8] if record.session_id else "(unknown)",
                 "yes" if record.project_exists else "no",
                 human_size(record.project_size_bytes),
@@ -175,8 +254,21 @@ def print_table(records: Iterable[SessionRecord]) -> None:
         print(fmt.format(*row))
 
 
-def choose_record(records: list[SessionRecord], session_id: str | None, archive_file: str | None) -> SessionRecord | None:
-    if session_id:
+def choose_record(
+    records: list[SessionRecord],
+    session_id: str | None,
+    archive_file: str | None,
+    index: int | None,
+    title: str | None,
+) -> SessionRecord | None:
+    if index is not None:
+        if index < 1 or index > len(records):
+            raise SystemExit(f"Index {index} is out of range. Run scan to see available indexes.")
+        return records[index - 1]
+    if title:
+        query = title.casefold()
+        matches = [record for record in records if query in record.title.casefold()]
+    elif session_id:
         matches = [record for record in records if record.session_id.startswith(session_id)]
     elif archive_file:
         matches = [record for record in records if record.archive_file == archive_file or record.archive_file.startswith(archive_file)]
@@ -186,7 +278,8 @@ def choose_record(records: list[SessionRecord], session_id: str | None, archive_
     if len(matches) == 1:
         return matches[0]
     if len(matches) > 1:
-        raise SystemExit(f"Ambiguous selector. Matched {len(matches)} sessions; use a longer id or exact file name.")
+        previews = ", ".join(f"{records.index(record) + 1}:{record.title}" for record in matches[:5])
+        raise SystemExit(f"Ambiguous selector. Matched {len(matches)} sessions: {previews}. Use --index or a longer title.")
     return None
 
 
@@ -234,10 +327,11 @@ def clean(args: argparse.Namespace) -> int:
     if args.project:
         selected_project = resolve_path(args.project)
     else:
-        record = choose_record(records, args.session_id, args.archive_file)
+        record = choose_record(records, args.session_id, args.archive_file, args.index, args.title)
         if not record:
             print("No matching archived session found.", file=sys.stderr)
             return 2
+        print(f"Selected: [{records.index(record) + 1}] {record.title}")
         selected_archive = resolve_path(record.archive_path)
         if record.cwd:
             selected_project = resolve_path(record.cwd)
@@ -288,6 +382,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     clean_parser = subparsers.add_parser("clean", help="Clean an archive file, project directory, or both.")
     selector = clean_parser.add_mutually_exclusive_group(required=True)
+    selector.add_argument("--index", type=int, help="1-based row number from the scan table.")
+    selector.add_argument("--title", help="Text contained in the conversation title.")
     selector.add_argument("--session-id", help="Session id prefix to clean.")
     selector.add_argument("--archive-file", help="Archived session file name or prefix to clean.")
     selector.add_argument("--project", help="Project directory to clean directly.")
