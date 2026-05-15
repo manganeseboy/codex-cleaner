@@ -9,6 +9,16 @@ Use the bundled script for deterministic cleanup work. Do not manually delete fi
 
 This skill should feel like a simple cleanup assistant. Do not ask non-technical users to type commands. Run the commands yourself, present numbered choices, and let the user reply with numbers such as `2` or `2,3,5`.
 
+## Language Behavior
+
+Mirror the user's language.
+
+- If the user writes in Chinese, respond in Chinese.
+- If the user writes in English, respond in English.
+- If the user mixes languages, use the dominant language and preserve conversation titles as-is.
+- Do not force Chinese labels for English users or English labels for Chinese users.
+- Commands, paths, and flags remain unchanged because they are CLI syntax.
+
 ## Script Location
 
 The CLI script is bundled at `scripts/codex_cleaner.py` relative to this `SKILL.md`. When running commands, resolve that script relative to the installed skill folder. If the current working directory is not the skill folder, use the script's absolute path.
@@ -23,10 +33,20 @@ python scripts/codex_cleaner.py scan --json
 
 2. Summarize the scan as a numbered list. Show only the user-friendly fields by default:
 
+English example:
+
 ```text
 1. Conversation title
    Size: 242.2 MB
    Workspace: C:\Users\...\Documents\Codex\...
+```
+
+Chinese example:
+
+```text
+1. 对话名称
+   大小：242.2 MB
+   项目目录：C:\Users\...\Documents\Codex\...
 ```
 
 3. Ask the user to reply with the number or numbers to clean. Accept formats like:
@@ -44,6 +64,18 @@ python scripts/codex_cleaner.py clean --indexes 2,3,5 --target both
 ```
 
 5. Explain the exact local paths that would be moved or deleted. Ask for confirmation in plain language.
+
+English confirmation wording:
+
+```text
+I will move these local files to Codex_Trash. This will not delete cloud-side ChatGPT/Codex history. Reply "confirm" to continue.
+```
+
+Chinese confirmation wording:
+
+```text
+我会把这些本地文件移动到 Codex_Trash，不会删除云端 ChatGPT/Codex 历史。回复“确认”后继续。
+```
 
 6. Apply only after the user confirms:
 
@@ -86,6 +118,8 @@ python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both
 - Use the readable Title column when explaining options to the user.
 - English and Chinese title keywords are both supported. Prefer the user's own language when suggesting `--title`.
 - For ordinary users, prefer row numbers over session IDs, archive filenames, or paths.
+- For English users, say "move to Codex_Trash" and "permanently delete".
+- For Chinese users, say "移动到 Codex_Trash" and "永久删除".
 
 ## Useful Commands
 
