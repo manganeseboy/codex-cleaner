@@ -4,7 +4,7 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 
 ![Codex Cleaner 演示](assets/demo.gif)
 
-当前版本：`v0.1.2`
+当前版本：`v0.1.3`
 
 它解决的问题很直接：
 

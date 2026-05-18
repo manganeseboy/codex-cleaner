@@ -30,6 +30,8 @@ PALETTE = {
 
 def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     candidates = [
+        Path("C:/Windows/Fonts/msyhbd.ttc" if bold else "C:/Windows/Fonts/msyh.ttc"),
+        Path("C:/Windows/Fonts/simhei.ttf"),
         Path("C:/Windows/Fonts/consolab.ttf" if bold else "C:/Windows/Fonts/consola.ttf"),
         Path("C:/Windows/Fonts/CascadiaMono.ttf"),
         Path("C:/Windows/Fonts/arial.ttf"),
@@ -56,7 +58,7 @@ def draw_terminal(lines: list[tuple[str, str]], footer: str | None = None) -> Im
     for x, color in [(78, "#ef4444"), (108, "#f59e0b"), (138, "#22c55e")]:
         draw.ellipse((x, 60, x + 14, 74), fill=color)
 
-    draw.text((172, 56), "Codex Cleaner demo", font=FONT_TITLE, fill=PALETTE["text"])
+    draw.text((172, 56), "Codex Cleaner Skill demo", font=FONT_TITLE, fill=PALETTE["text"])
 
     y = 126
     for text, color in lines:
@@ -76,12 +78,13 @@ def make_frames() -> list[Image.Image]:
     frames.append(
         draw_terminal(
             [
-                ("> codex-cleaner scan", "green"),
+                ("> Use codex-cleaner to scan my archived conversations", "green"),
                 ("", "text"),
-                ("Scanning ~/.codex/archived_sessions ...", "muted"),
-                ("Mapping each session to its recorded workspace cwd ...", "muted"),
+                ("Scanning local archived Codex sessions ...", "muted"),
+                ("Reading conversation titles and matching project folders ...", "muted"),
+                ("No files are deleted during scan.", "yellow"),
             ],
-            "Step 1: scan first, delete nothing.",
+            "Step 1: scan first, delete nothing. / 第一步：先扫描，不删除。",
         )
     )
 
@@ -95,58 +98,77 @@ def make_frames() -> list[Image.Image]:
                 ("1   Build sales image analyzer    019e25e9  242.2 MB  ...\\2026-05-14\\windows", "text"),
                 ("2   Summarize PPE agencies        019e24a6  10.6 KB   ...\\2026-05-14\\demo-export", "yellow"),
                 ("3   Product director workflow     019dce27  17.7 KB   ...\\2026-04-27\\new-chat", "text"),
+                ("", "text"),
+                ("User replies: 2", "green"),
             ],
-            "Step 2: pick by readable title or row number.",
+            "Step 2: choose by readable title or row number. / 第二步：按编号选择。",
         )
     )
 
     frames.append(
         draw_terminal(
             [
-                ("> codex-cleaner clean --index 2 --target both", "green"),
+                ("Codex asks: What should I clean?", "blue"),
+                ("", "text"),
+                ("1. Delete archived conversation only - keep project files", "text"),
+                ("2. Delete local project files only - keep the conversation", "text"),
+                ("3. Delete both - move to Codex_Trash", "text"),
+                ("4. Permanently delete everything - cannot be restored", "red"),
+                ("", "text"),
+                ("用户也会看到：只删对话 / 只删项目 / 两者都清理 / 彻底删除", "yellow"),
+            ],
+            "Step 3: choose the cleanup mode from one menu. / 第三步：选择清理方式。",
+        )
+    )
+
+    frames.append(
+        draw_terminal(
+            [
+                ("User chooses: 1. Conversation only", "green"),
                 ("", "text"),
                 ("Selected: [2] Summarize PPE agencies", "blue"),
-                ("Dry run only. Re-run with --yes to apply.", "yellow"),
-                ("dry-run: would move to trash:", "muted"),
-                ("  C:\\Users\\you\\Documents\\Codex\\2026-05-14\\demo-export", "text"),
-                ("dry-run: would move to trash:", "muted"),
+                ("Conversation-only mode. Project files will be kept.", "yellow"),
+                ("Dry run only. Reply confirm to apply.", "yellow"),
+                ("dry-run: would move archived log to Codex_Trash:", "muted"),
                 ("  C:\\Users\\you\\.codex\\archived_sessions\\rollout-019e24a6.jsonl", "text"),
+                ("", "text"),
+                ("Kept: C:\\Users\\you\\Documents\\Codex\\2026-05-14\\demo-export", "green"),
             ],
-            "Step 3: dry-run shows the exact paths before cleanup.",
+            "Step 4: preview exact paths before cleanup. / 第四步：先预览路径。",
         )
     )
 
     frames.append(
         draw_terminal(
             [
-                ("> codex-cleaner clean --index 2 --target both --yes", "green"),
+                ("User confirms: confirm", "green"),
                 ("", "text"),
                 ("Selected: [2] Summarize PPE agencies", "blue"),
-                ("moved:", "green"),
-                ("  ...\\2026-05-14\\demo-export", "text"),
-                ("  -> C:\\Users\\you\\Documents\\Codex_Trash\\20260515-170000_project_demo-export", "muted"),
+                ("Conversation-only mode. Project files will be kept.", "yellow"),
                 ("moved:", "green"),
                 ("  ...\\archived_sessions\\rollout-019e24a6.jsonl", "text"),
-                ("  -> C:\\Users\\you\\Documents\\Codex_Trash\\20260515-170000_archive_rollout.jsonl", "muted"),
+                ("  -> C:\\Users\\you\\Documents\\Codex_Trash\\20260518_archive_rollout.jsonl", "muted"),
+                ("", "text"),
+                ("Local cleanup complete. Project files were kept.", "green"),
+                ("Cloud-side ChatGPT/Codex history is not changed.", "muted"),
             ],
-            "Step 4: cleanup moves files to Codex_Trash by default.",
+            "Done: safe local cleanup with clear choices. / 完成：选择清楚，默认安全。",
         )
     )
 
     frames.append(
         draw_terminal(
             [
-                ("> codex-cleaner scan", "green"),
+                ("Permanent delete is available, but separated.", "red"),
                 ("", "text"),
-                ("#   Title                         Session   Size      Workspace", "blue"),
-                ("--  ----------------------------  --------  --------  ------------------------------", "muted"),
-                ("1   Build sales image analyzer    019e25e9  242.2 MB  ...\\2026-05-14\\windows", "text"),
-                ("2   Product director workflow     019dce27  17.7 KB   ...\\2026-04-27\\new-chat", "text"),
+                ("If the user picks option 4:", "blue"),
+                ("  - Codex dry-runs first", "text"),
+                ("  - Codex warns it will not go to Codex_Trash", "text"),
+                ("  - Codex asks for explicit final confirmation", "text"),
                 ("", "text"),
-                ("Local archived log and workspace output cleaned safely.", "green"),
-                ("Cloud-side ChatGPT/Codex history is not changed.", "muted"),
+                ("普通用户不用记命令，只按编号选择。", "green"),
             ],
-            "Done: safer cleanup for archived Codex workspaces.",
+            "Option 4 is deliberately treated as dangerous. / 第 4 项会明确提示风险。",
         )
     )
 
@@ -160,7 +182,7 @@ def main() -> None:
         OUT,
         save_all=True,
         append_images=frames[1:],
-        duration=[1200, 1800, 2200, 2200, 2200],
+        duration=[1400, 2200, 2600, 2600, 2400, 2400],
         loop=0,
         optimize=True,
     )

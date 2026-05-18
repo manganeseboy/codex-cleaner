@@ -4,7 +4,7 @@ Safely review and remove archived Codex sessions together with the local workspa
 
 ![Codex Cleaner demo](assets/demo.gif)
 
-Current release: `v0.1.2`
+Current release: `v0.1.3`
 
 Codex Cleaner helps you answer a practical question:
 
