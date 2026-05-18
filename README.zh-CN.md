@@ -143,7 +143,19 @@ $skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main
 使用 codex-cleaner 帮我扫描归档对话
 ```
 
-Codex 会展示编号列表，用户只需要回复 `2` 或 `2,3,5`。Skill 会要求 Codex 先预览，再确认后清理。
+Codex 会展示编号列表，用户只需要回复 `2` 或 `2,3,5`。
+
+然后 Codex 会直接展示一个清理方式菜单：
+
+```text
+你想清理哪一部分？
+1. 只删除本地归档对话记录，保留项目文件
+2. 只删除本地项目文件，保留归档对话记录
+3. 对话记录和项目文件都清理，移动到 Codex_Trash
+4. 彻底删除清空，不进入 Codex_Trash，无法恢复
+```
+
+Skill 会要求 Codex 先预览，再确认后清理。彻底删除会作为单独的危险选项展示，并且仍然需要二次确认。
 
 ## 许可证
 

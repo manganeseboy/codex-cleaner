@@ -148,7 +148,19 @@ After installing the skill, non-technical users can simply ask Codex:
 Use codex-cleaner to scan my archived conversations.
 ```
 
-Codex should show a numbered list, then the user can reply with `2` or `2,3,5`. The skill tells Codex to dry-run first and ask for confirmation before cleaning.
+Codex should show a numbered list, then the user can reply with `2` or `2,3,5`.
+
+After that, Codex should show one simple cleanup menu:
+
+```text
+What should I clean?
+1. Delete archived conversation only - keep project files
+2. Delete local project files only - keep the archived conversation
+3. Delete both conversation and project files - move to Codex_Trash
+4. Permanently delete everything - cannot be restored
+```
+
+The skill tells Codex to dry-run first and ask for confirmation before cleaning. Permanent deletion is shown as a separate dangerous option and still requires final confirmation.
 
 ## Safety model
 
