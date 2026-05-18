@@ -4,7 +4,7 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 
 ![Codex Cleaner 演示](assets/demo.gif)
 
-当前版本：`v0.1.0`
+当前版本：`v0.1.1`
 
 它解决的问题很直接：
 
@@ -136,6 +136,22 @@ python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\
 ```text
 $skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
 ```
+
+## 已安装用户如何更新
+
+已经安装过的用户不会自动收到 GitHub 推送更新。Skill 会被复制到用户本机的 Codex skills 文件夹里，所以更新的本质是：删除旧的本地副本，再从 GitHub 重新安装最新版。
+
+可以让用户直接对 Codex 说：
+
+```text
+我已经安装过 codex-cleaner，请帮我删除旧版本并重新安装最新版。
+地址：
+https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
+```
+
+更新后需要重启 Codex，让新的 skill 说明生效。
+
+想收到新版本提醒的用户，可以关注 GitHub 仓库，或者查看 [Releases 页面](https://github.com/manganeseboy/codex-cleaner/releases)。GitHub 可以提醒用户有新版本，但已经安装到本地 Codex 的 skill 仍然需要手动更新。
 
 安装 Skill 后，小白用户可以直接对 Codex 说：
 

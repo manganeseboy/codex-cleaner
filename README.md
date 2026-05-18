@@ -4,7 +4,7 @@ Safely review and remove archived Codex sessions together with the local workspa
 
 ![Codex Cleaner demo](assets/demo.gif)
 
-Current release: `v0.1.0`
+Current release: `v0.1.1`
 
 Codex Cleaner helps you answer a practical question:
 
@@ -141,6 +141,21 @@ After the repo is published, users can install it from Codex with:
 ```text
 $skill-installer install https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
 ```
+
+## Updating an Installed Skill
+
+Installed users do not receive automatic push updates from GitHub. The skill is copied into the user's local Codex skills folder, so updating means replacing the old local copy with the latest GitHub version.
+
+Tell users to ask Codex:
+
+```text
+I already installed codex-cleaner. Please remove the old local codex-cleaner skill and reinstall the latest version from:
+https://github.com/manganeseboy/codex-cleaner/tree/main/skills/codex-cleaner
+```
+
+After updating, restart Codex so the new skill instructions are loaded.
+
+For release notifications, users can watch the GitHub repository or follow the [Releases page](https://github.com/manganeseboy/codex-cleaner/releases). GitHub can notify them that a new version exists, but the local Codex skill still needs to be updated manually.
 
 After installing the skill, non-technical users can simply ask Codex:
 
