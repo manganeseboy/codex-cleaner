@@ -56,14 +56,41 @@ Chinese example:
 2,3,5
 ```
 
-4. Convert the user's reply into `--index` or `--indexes`. Always dry-run first:
+4. Ask what to clean unless the user already said it:
+
+English:
+
+```text
+What should I clean?
+1. Conversation only - keep project files
+2. Project files only - keep the conversation
+3. Conversation and project files
+```
+
+Chinese:
+
+```text
+你想清理哪一部分？
+1. 只删除会话记录，保留项目文件
+2. 只删除项目文件，保留会话记录
+3. 会话记录和项目文件都清理
+```
+
+Use mode mapping:
+
+- conversation only -> `--conversation-only`
+- project/files only -> `--files-only`
+- conversation and project files -> default `--target both`
+
+5. Convert the user's reply into `--index` or `--indexes`. Always dry-run first:
 
 ```powershell
-python scripts/codex_cleaner.py clean --index 2 --target both
+python scripts/codex_cleaner.py clean --index 2 --conversation-only
+python scripts/codex_cleaner.py clean --indexes 2,3,5 --files-only
 python scripts/codex_cleaner.py clean --indexes 2,3,5 --target both
 ```
 
-5. Explain the exact local paths that would be moved or deleted. Ask for confirmation in plain language.
+6. Explain the exact local paths that would be moved or deleted. Ask for confirmation in plain language. If using conversation-only mode, explicitly say project files will be kept.
 
 English confirmation wording:
 
@@ -77,18 +104,19 @@ Chinese confirmation wording:
 我会把这些本地文件移动到 Codex_Trash，不会删除云端 ChatGPT/Codex 历史。回复“确认”后继续。
 ```
 
-6. Apply only after the user confirms:
+7. Apply only after the user confirms:
 
 ```powershell
-python scripts/codex_cleaner.py clean --index 2 --target both --yes
+python scripts/codex_cleaner.py clean --index 2 --conversation-only --yes
+python scripts/codex_cleaner.py clean --indexes 2,3,5 --files-only --yes
 python scripts/codex_cleaner.py clean --indexes 2,3,5 --target both --yes
 ```
 
-7. If the user explicitly asks for permanent deletion, dry-run first, then apply with both `--permanent` and `--yes`:
+8. If the user explicitly asks for permanent deletion, dry-run first, then apply with both `--permanent` and `--yes`:
 
 ```powershell
-python scripts/codex_cleaner.py clean --index 2 --target both --permanent
-python scripts/codex_cleaner.py clean --index 2 --target both --permanent --yes
+python scripts/codex_cleaner.py clean --index 2 --conversation-only --permanent
+python scripts/codex_cleaner.py clean --index 2 --conversation-only --permanent --yes
 ```
 
 ## Advanced Selectors
@@ -99,6 +127,18 @@ python scripts/codex_cleaner.py clean --index 3 --target both
 
 ```powershell
 python scripts/codex_cleaner.py clean --title "title keyword" --target both
+```
+
+Conversation-only cleanup:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 3 --conversation-only --yes
+```
+
+Files-only cleanup:
+
+```powershell
+python scripts/codex_cleaner.py clean --index 3 --files-only --yes
 ```
 
 For cleanup by session id:
@@ -120,6 +160,8 @@ python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target both
 - For ordinary users, prefer row numbers over session IDs, archive filenames, or paths.
 - For English users, say "move to Codex_Trash" and "permanently delete".
 - For Chinese users, say "移动到 Codex_Trash" and "永久删除".
+- If the user says "delete/clear conversation only", "keep project files", "只删除会话", "清空会话", or "保留项目文件", use `--conversation-only`.
+- If the user says "delete generated files only", "keep conversation", "只删除项目文件", or "保留会话记录", use `--files-only`.
 
 ## Useful Commands
 

@@ -19,6 +19,8 @@ The first version focuses on Windows Codex Desktop layouts, while keeping the co
 - Checks whether the corresponding local workspace still exists.
 - Reports file counts, directory counts, and approximate size.
 - Deletes archived session logs, project folders, or both after explicit confirmation.
+- Supports conversation-only cleanup when you want to keep project files.
+- Supports files-only cleanup when you want to keep the archived conversation record.
 - Moves deleted content into `~/Documents/Codex_Trash` by default instead of permanent deletion.
 - Refuses to delete project paths outside the configured Codex workspace root unless explicitly overridden.
 
@@ -50,6 +52,30 @@ Preview deleting one archived session and its workspace by row number:
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --index 3 --target both
+```
+
+Preview deleting only the archived conversation/session log while keeping project files:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --conversation-only
+```
+
+Apply conversation-only cleanup:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --conversation-only --yes
+```
+
+Preview deleting only local project files while keeping the archived conversation:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --files-only
+```
+
+Apply files-only cleanup:
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --files-only --yes
 ```
 
 Preview deleting by title keyword:
@@ -136,6 +162,8 @@ Codex Cleaner is intentionally conservative:
 - The scan warns when multiple archived sessions point at the same workspace.
 - Users can clean by table row number, title keyword, session id, archive file, or direct project path.
 - Multiple rows can be cleaned with `--indexes`, for example `--indexes 2,3,5`.
+- Use `--conversation-only` to delete only archived local conversation logs and keep project files.
+- Use `--files-only` to delete only local project files and keep archived conversation logs.
 
 ## Limitations
 

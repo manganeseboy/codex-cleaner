@@ -370,11 +370,29 @@ def remove_or_trash(path: Path, trash_dir: Path, permanent: bool, dry_run: bool,
     return f"moved: {path} -> {destination}"
 
 
+def resolve_clean_target(args: argparse.Namespace) -> str:
+    if args.conversation_only:
+        return "archive"
+    if args.files_only:
+        return "project"
+    return args.target
+
+
+def print_clean_mode(target: str) -> None:
+    if target == "archive":
+        print("Conversation-only mode. Project files will be kept.")
+    elif target == "project":
+        print("Files-only mode. Archived conversation logs will be kept.")
+    else:
+        print("Conversation-and-files mode. Archived logs and project files are selected.")
+
+
 def clean(args: argparse.Namespace) -> int:
     archive_dir = resolve_path(args.archive_dir)
     codex_root = resolve_path(args.codex_root)
     trash_dir = resolve_path(args.trash_dir)
     records = scan_sessions(archive_dir)
+    target = resolve_clean_target(args)
 
     selected_archives: list[Path] = []
     selected_projects: list[Path] = []
@@ -391,11 +409,11 @@ def clean(args: argparse.Namespace) -> int:
         selected_archives = unique_paths(resolve_path(record.archive_path) for record in selected_records)
         selected_projects = unique_paths(resolve_path(record.cwd) for record in selected_records if record.cwd)
 
-    if args.target in ("archive", "both") and not selected_archives:
+    if target in ("archive", "both") and not selected_archives:
         print("No archive file selected.", file=sys.stderr)
         return 2
 
-    if args.target in ("project", "both") and not selected_projects:
+    if target in ("project", "both") and not selected_projects:
         print("No project folder selected.", file=sys.stderr)
         return 2
 
@@ -411,16 +429,17 @@ def clean(args: argparse.Namespace) -> int:
             return 3
 
     dry_run = not args.yes
+    print_clean_mode(target)
     if dry_run:
         print("Dry run only. Re-run with --yes to apply.")
     elif args.permanent:
         print("Permanent deletion enabled. Items will not be moved to trash.")
 
     actions: list[str] = []
-    if args.target in ("project", "both"):
+    if target in ("project", "both"):
         for selected_project in selected_projects:
             actions.append(remove_or_trash(selected_project, trash_dir, args.permanent, dry_run, "project"))
-    if args.target in ("archive", "both"):
+    if target in ("archive", "both"):
         for selected_archive in selected_archives:
             actions.append(remove_or_trash(selected_archive, trash_dir, args.permanent, dry_run, "archive"))
 
@@ -450,6 +469,9 @@ def build_parser() -> argparse.ArgumentParser:
     selector.add_argument("--archive-file", help="Archived session file name or prefix to clean.")
     selector.add_argument("--project", help="Project directory to clean directly.")
     clean_parser.add_argument("--target", choices=("archive", "project", "both"), default="both", help="What to clean.")
+    clean_mode = clean_parser.add_mutually_exclusive_group()
+    clean_mode.add_argument("--conversation-only", action="store_true", help="Clean only archived conversation/session logs and keep project files.")
+    clean_mode.add_argument("--files-only", action="store_true", help="Clean only local project/workspace files and keep archived conversation logs.")
     clean_parser.add_argument("--yes", action="store_true", help="Apply changes. Without this, clean is a dry run.")
     clean_parser.add_argument("--permanent", action="store_true", help="Permanently delete instead of moving to trash.")
     clean_parser.add_argument("--allow-outside-codex-root", action="store_true", help="Allow project cleanup outside --codex-root.")

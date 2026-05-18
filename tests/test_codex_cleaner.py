@@ -324,6 +324,77 @@ class CleanSessionsTest(unittest.TestCase):
             self.assertEqual(len(list(trash_dir.glob("*_project_shared*"))), 1)
             self.assertEqual(len(list(trash_dir.glob("*_archive_*.jsonl"))), 2)
 
+    def test_conversation_only_keeps_project_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / ".codex" / "archived_sessions"
+            archive_dir.mkdir(parents=True)
+            codex_root = tmp_path / "Documents" / "Codex"
+            project = codex_root / "2026-05-15" / "demo"
+            project.mkdir(parents=True)
+            (project / "hello.txt").write_text("hello", encoding="utf-8")
+            archive_file = archive_dir / "rollout-demo.jsonl"
+            write_session(archive_file, "abc123", project)
+            trash_dir = tmp_path / "Documents" / "Codex_Trash"
+
+            exit_code = main(
+                [
+                    "--archive-dir",
+                    str(archive_dir),
+                    "--codex-root",
+                    str(codex_root),
+                    "--trash-dir",
+                    str(trash_dir),
+                    "clean",
+                    "--index",
+                    "1",
+                    "--conversation-only",
+                    "--yes",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertTrue(project.exists())
+            self.assertTrue((project / "hello.txt").exists())
+            self.assertFalse(archive_file.exists())
+            self.assertEqual(len(list(trash_dir.glob("*_archive_*.jsonl"))), 1)
+            self.assertEqual(len(list(trash_dir.glob("*_project_*"))), 0)
+
+    def test_files_only_keeps_archived_conversation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / ".codex" / "archived_sessions"
+            archive_dir.mkdir(parents=True)
+            codex_root = tmp_path / "Documents" / "Codex"
+            project = codex_root / "2026-05-15" / "demo"
+            project.mkdir(parents=True)
+            (project / "hello.txt").write_text("hello", encoding="utf-8")
+            archive_file = archive_dir / "rollout-demo.jsonl"
+            write_session(archive_file, "abc123", project)
+            trash_dir = tmp_path / "Documents" / "Codex_Trash"
+
+            exit_code = main(
+                [
+                    "--archive-dir",
+                    str(archive_dir),
+                    "--codex-root",
+                    str(codex_root),
+                    "--trash-dir",
+                    str(trash_dir),
+                    "clean",
+                    "--index",
+                    "1",
+                    "--files-only",
+                    "--yes",
+                ]
+            )
+
+            self.assertEqual(exit_code, 0)
+            self.assertFalse(project.exists())
+            self.assertTrue(archive_file.exists())
+            self.assertEqual(len(list(trash_dir.glob("*_project_demo*"))), 1)
+            self.assertEqual(len(list(trash_dir.glob("*_archive_*.jsonl"))), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

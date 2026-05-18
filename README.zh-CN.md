@@ -18,6 +18,8 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 - 读取每个会话记录里的 `cwd`，找到对应本地项目目录。
 - 显示项目是否存在、文件数量、目录数量、占用空间。
 - 支持删除归档会话记录、项目目录，或者两者一起删除。
+- 支持只删除会话记录，保留项目文件。
+- 支持只删除项目文件，保留会话记录。
 - 默认移动到 `~/Documents/Codex_Trash`，不是直接永久删除。
 - 默认只允许清理 `~/Documents/Codex` 里的项目，避免误删其他目录。
 - 检测多个归档会话是否指向同一个项目目录。
@@ -42,6 +44,20 @@ python .\scripts\codex_cleaner.py scan --json
 
 ```powershell
 python .\scripts\codex_cleaner.py clean --index 3 --target both
+```
+
+只删除会话记录、保留项目文件：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --conversation-only
+python .\scripts\codex_cleaner.py clean --index 3 --conversation-only --yes
+```
+
+只删除项目文件、保留会话记录：
+
+```powershell
+python .\scripts\codex_cleaner.py clean --index 3 --files-only
+python .\scripts\codex_cleaner.py clean --index 3 --files-only --yes
 ```
 
 按对话名称关键词预览清理：
@@ -106,6 +122,8 @@ python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\
 - 本工具只清理本地文件和本地归档日志，不会删除云端 ChatGPT/Codex 历史。
 - 本工具在本地运行，不会把会话记录或文件内容发送到远程服务。
 - 支持按表格编号、对话名称关键词、会话 ID、归档文件名、项目路径进行清理。
+- `--conversation-only` 只删除本地归档会话记录，保留项目文件。
+- `--files-only` 只删除本地项目文件，保留归档会话记录。
 
 ## Codex Skill 安装
 
