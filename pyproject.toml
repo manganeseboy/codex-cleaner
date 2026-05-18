@@ -1,7 +1,7 @@
 [project]
 name = "codex-cleaner"
-version = "0.1.0"
-description = "Safely review and remove local Codex archived sessions and workspace outputs."
+version = "0.1.2"
+description = "Safely review and clean local Codex archived sessions and workspace outputs."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }

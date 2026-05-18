@@ -196,17 +196,17 @@ python scripts/codex_cleaner.py scan --json
 Clean only the archived session log:
 
 ```powershell
-python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target archive --yes
+python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --conversation-only --yes
 ```
 
 Clean only the local workspace:
 
 ```powershell
-python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --target project --yes
+python scripts/codex_cleaner.py clean --session-id SESSION_PREFIX --files-only --yes
 ```
 
 Clean a direct project path:
 
 ```powershell
-python scripts/codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\2026-05-14\windows" --target project --yes
+python scripts/codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\2026-05-14\windows" --files-only --yes
 ```

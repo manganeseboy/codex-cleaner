@@ -1,3 +1,3 @@
 display_name: Codex Cleaner
-short_description: Review and safely clean local Codex archived sessions and workspace outputs, with Chinese and English prompts.
-default_prompt: Scan my archived Codex sessions and show a numbered list I can clean by replying with numbers.
+short_description: Review and safely clean local Codex archived sessions and project files with a numbered cleanup menu.
+default_prompt: Use codex-cleaner to scan my archived Codex sessions, then let me choose whether to delete conversations, project files, both, or permanently delete everything.

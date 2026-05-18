@@ -4,7 +4,7 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 
 ![Codex Cleaner 演示](assets/demo.gif)
 
-当前版本：`v0.1.1`
+当前版本：`v0.1.2`
 
 它解决的问题很直接：
 
@@ -20,11 +20,36 @@ Codex Cleaner 用来安全清理本地 Codex 归档会话，以及这些会话�
 - 支持删除归档会话记录、项目目录，或者两者一起删除。
 - 支持只删除会话记录，保留项目文件。
 - 支持只删除项目文件，保留会话记录。
+- Skill 会把永久删除作为单独的危险选项展示。
 - 默认移动到 `~/Documents/Codex_Trash`，不是直接永久删除。
 - 默认只允许清理 `~/Documents/Codex` 里的项目，避免误删其他目录。
 - 检测多个归档会话是否指向同一个项目目录。
 
-## 使用
+## 推荐使用方式：Codex Skill
+
+对大多数用户，推荐直接使用 Codex Skill，不需要自己输入清理命令。
+
+安装 Skill 后，对 Codex 说：
+
+```text
+使用 codex-cleaner 帮我扫描归档对话
+```
+
+Codex 会展示归档对话编号列表。用户只需要回复一个编号，比如 `2`，或者多个编号，比如 `2,3,5`。
+
+然后 Codex 会展示这个清理方式菜单：
+
+```text
+你想清理哪一部分？
+1. 只删除本地归档对话记录，保留项目文件
+2. 只删除本地项目文件，保留归档对话记录
+3. 对话记录和项目文件都清理，移动到 Codex_Trash
+4. 彻底删除清空，不进入 Codex_Trash，无法恢复
+```
+
+Codex 会先预览具体会影响哪些本地路径，用户确认后才会清理。第 4 项是永久删除，需要额外明确确认。
+
+## 命令行使用
 
 扫描归档会话：
 
@@ -91,13 +116,7 @@ python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent
 python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent --yes
 ```
 
-对非专业用户，推荐固定这样用：
-
-```powershell
-python .\scripts\codex_cleaner.py scan
-python .\scripts\codex_cleaner.py clean --index 3 --target both
-python .\scripts\codex_cleaner.py clean --index 3 --target both --yes
-```
+对非专业用户，推荐使用上面的 Codex Skill 流程，而不是直接输入命令行。
 
 一次清理多个编号：
 
@@ -109,7 +128,7 @@ python .\scripts\codex_cleaner.py clean --indexes 2,3,5 --target both --yes
 只清理指定项目目录：
 
 ```powershell
-python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\2026-05-14\windows" --target project --yes
+python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\2026-05-14\windows" --files-only --yes
 ```
 
 ## 安全原则

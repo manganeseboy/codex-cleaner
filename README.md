@@ -4,7 +4,7 @@ Safely review and remove archived Codex sessions together with the local workspa
 
 ![Codex Cleaner demo](assets/demo.gif)
 
-Current release: `v0.1.1`
+Current release: `v0.1.2`
 
 Codex Cleaner helps you answer a practical question:
 
@@ -21,10 +21,35 @@ The first version focuses on Windows Codex Desktop layouts, while keeping the co
 - Deletes archived session logs, project folders, or both after explicit confirmation.
 - Supports conversation-only cleanup when you want to keep project files.
 - Supports files-only cleanup when you want to keep the archived conversation record.
+- Shows permanent deletion as a separate dangerous menu option in the Skill workflow.
 - Moves deleted content into `~/Documents/Codex_Trash` by default instead of permanent deletion.
 - Refuses to delete project paths outside the configured Codex workspace root unless explicitly overridden.
 
-## Install
+## Recommended Skill Workflow
+
+For most people, use the Codex Skill instead of typing cleanup commands yourself.
+
+After installing the skill, ask Codex:
+
+```text
+Use codex-cleaner to scan my archived conversations.
+```
+
+Codex should show a numbered list of archived conversations. Reply with a number such as `2`, or multiple numbers such as `2,3,5`.
+
+Then Codex should show this cleanup menu:
+
+```text
+What should I clean?
+1. Delete archived conversation only - keep project files
+2. Delete local project files only - keep the archived conversation
+3. Delete both conversation and project files - move to Codex_Trash
+4. Permanently delete everything - cannot be restored
+```
+
+Codex will preview the exact local paths first. Cleanup only happens after confirmation. Option 4 is permanent deletion and requires an extra explicit confirmation.
+
+## CLI Quick Start
 
 No package install is required for the basic CLI. Use Python 3.10 or newer.
 
@@ -109,13 +134,7 @@ python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent
 python .\scripts\codex_cleaner.py clean --index 3 --target both --permanent --yes
 ```
 
-For non-technical users, the safest flow is:
-
-```powershell
-python .\scripts\codex_cleaner.py scan
-python .\scripts\codex_cleaner.py clean --index 3 --target both
-python .\scripts\codex_cleaner.py clean --index 3 --target both --yes
-```
+For non-technical users, the Skill workflow above is safer than typing CLI commands directly.
 
 Clean multiple numbered rows:
 
@@ -127,7 +146,7 @@ python .\scripts\codex_cleaner.py clean --indexes 2,3,5 --target both --yes
 Delete only a specific project folder:
 
 ```powershell
-python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\2026-05-14\windows" --target project --yes
+python .\scripts\codex_cleaner.py clean --project "C:\Users\you\Documents\Codex\2026-05-14\windows" --files-only --yes
 ```
 
 ## Codex Skill
