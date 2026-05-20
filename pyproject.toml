@@ -6,6 +6,31 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "Codex Cleaner Contributors" }]
+keywords = [
+  "codex",
+  "codex-skill",
+  "cleanup",
+  "archived-sessions",
+  "workspace-cleaner",
+  "developer-tools",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Software Development",
+  "Topic :: System :: Archiving",
+  "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/manganeseboy/codex-cleaner"
+Repository = "https://github.com/manganeseboy/codex-cleaner"
+Releases = "https://github.com/manganeseboy/codex-cleaner/releases"
 
 [project.scripts]
 codex-cleaner = "scripts.codex_cleaner:main"
@@ -13,3 +38,7 @@ codex-cleaner = "scripts.codex_cleaner:main"
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["scripts*"]
+exclude = ["assets*", "docs*", "skills*", "tests*"]
