@@ -180,6 +180,96 @@ class ScanSessionsTest(unittest.TestCase):
 
             self.assertEqual(records[0].title, "汇总这个表格")
 
+    def test_scan_sessions_repairs_gbk_mojibake_title(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / "archived_sessions"
+            archive_dir.mkdir()
+            project = tmp_path / "Documents" / "Codex" / "demo"
+            project.mkdir(parents=True)
+            expected_title = "\u4f7f\u7528 codex-cleaner \u5e2e\u6211\u626b\u63cf\u5f52\u6863\u5bf9\u8bdd"
+
+            write_session(
+                archive_dir / "rollout-demo.jsonl",
+                "abc123",
+                project,
+                user_text=expected_title.encode("utf-8").decode("gb18030"),
+            )
+
+            records = scan_sessions(archive_dir)
+
+            self.assertEqual(records[0].title, expected_title)
+
+    def test_scan_sessions_repairs_latin1_mojibake_title(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / "archived_sessions"
+            archive_dir.mkdir()
+            project = tmp_path / "Documents" / "Codex" / "demo"
+            project.mkdir(parents=True)
+            expected_title = "\u4f7f\u7528 codex-cleaner \u5e2e\u6211\u626b\u63cf\u5f52\u6863\u5bf9\u8bdd"
+
+            write_session(
+                archive_dir / "rollout-demo.jsonl",
+                "abc123",
+                project,
+                user_text=expected_title.encode("utf-8").decode("latin1"),
+            )
+
+            records = scan_sessions(archive_dir)
+
+            self.assertEqual(records[0].title, expected_title)
+
+    def test_scan_sessions_skips_agents_instructions_for_title(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            archive_dir = tmp_path / "archived_sessions"
+            archive_dir.mkdir()
+            project = tmp_path / "Documents" / "Codex" / "demo"
+            project.mkdir(parents=True)
+
+            meta = {
+                "timestamp": "2026-05-15T00:00:00Z",
+                "type": "session_meta",
+                "payload": {
+                    "id": "abc123",
+                    "timestamp": "2026-05-15T00:00:00Z",
+                    "cwd": str(project),
+                    "title": "# AGENTS.md instructions for C:\\demo",
+                },
+            }
+            agents_message = {
+                "timestamp": "2026-05-15T00:00:01Z",
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "# AGENTS.md instructions for C:\\demo\n\n<INSTRUCTIONS>\n# Codex 全局规则\n</INSTRUCTIONS>",
+                        }
+                    ],
+                },
+            }
+            real_message = {
+                "timestamp": "2026-05-15T00:00:02Z",
+                "type": "response_item",
+                "payload": {
+                    "type": "message",
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": "Fix archived session title scanning"}],
+                },
+            }
+            (archive_dir / "rollout-demo.jsonl").write_text(
+                "\n".join(json.dumps(item) for item in (meta, agents_message, real_message)),
+                encoding="utf-8",
+            )
+
+            records = scan_sessions(archive_dir)
+
+            self.assertEqual(records[0].title, "Fix archived session title scanning")
+
 
 class CleanSessionsTest(unittest.TestCase):
     def test_permanent_clean_deletes_archive_and_project(self) -> None:

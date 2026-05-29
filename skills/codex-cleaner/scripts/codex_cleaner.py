@@ -111,14 +111,26 @@ def is_meaningful_user_text(text: str) -> bool:
     technical_prefixes = (
         "<environment_context>",
         "<image>",
+        "<INSTRUCTIONS>",
+        "# AGENTS.md instructions",
+        "AGENTS.md instructions",
+        "# Codex 全局规则",
     )
     return not normalized.startswith(technical_prefixes)
 
 
 def make_title(meta: dict, first_user_text: str, cwd: str, session_id: str) -> str:
-    explicit = meta.get("title") or meta.get("name") or meta.get("conversation_title")
-    source = normalize_title_source(str(explicit or first_user_text or ""))
-    source = " ".join(source.split())
+    candidates = [
+        meta.get("title"),
+        meta.get("name"),
+        meta.get("conversation_title"),
+        first_user_text,
+    ]
+    source = ""
+    for candidate in candidates:
+        source = clean_title_candidate(str(candidate or ""))
+        if source:
+            break
 
     if not source and cwd:
         source = Path(cwd).name
@@ -126,6 +138,72 @@ def make_title(meta: dict, first_user_text: str, cwd: str, session_id: str) -> s
         source = session_id[:8] or "Untitled session"
 
     return truncate(source, 64)
+
+
+def clean_title_candidate(text: str) -> str:
+    source = repair_mojibake(text)
+    source = normalize_title_source(source)
+    source = " ".join(source.split())
+    return source if is_meaningful_user_text(source) else ""
+
+
+def repair_mojibake(text: str) -> str:
+    text = text.strip()
+    if not text:
+        return ""
+
+    candidates = [text]
+    for encoding in ("gb18030", "gbk", "latin1", "cp1252"):
+        try:
+            repaired = text.encode(encoding).decode("utf-8")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            continue
+        candidates.append(repaired)
+
+    return max(candidates, key=title_quality_score)
+
+
+def title_quality_score(text: str) -> int:
+    mojibake_markers = (
+        "浣",
+        "跨",
+        "敤",
+        "甯",
+        "鎴",
+        "鎵",
+        "弿",
+        "褰",
+        "掓",
+        "瀵",
+        "硅",
+        "瘽",
+        "鍓",
+        "竴",
+        "涔",
+        "洿",
+        "鏂",
+        "Ã",
+        "Â",
+        "â",
+        "ä",
+        "å",
+        "ç",
+        "è",
+        "�",
+    )
+    score = 0
+    for char in text:
+        if "\u4e00" <= char <= "\u9fff":
+            score += 2
+        elif char.isalnum():
+            score += 1
+        elif char.isspace() or char in "-_:/\\.,，。！？!?()[]{}<>#":
+            score += 0
+        else:
+            score -= 1
+    for marker in mojibake_markers:
+        score -= text.count(marker) * 5
+    return score
 
 
 def normalize_title_source(text: str) -> str:

@@ -20,6 +20,8 @@ Codex users can archive conversations, but local generated project folders may r
 - Scan local archived session logs under `~/.codex/archived_sessions`.
 - Read `session_meta.payload.cwd` to map archived conversations to local workspaces.
 - Show readable conversation titles generated from the first real user message.
+- Repair common GBK/UTF-8 or Latin-1/UTF-8 mojibake in conversation titles.
+- Skip technical context blocks such as environment context and `AGENTS.md` instructions when choosing a title.
 - Support cleanup by index, title, session id, archive file, or project path.
 - Support conversation-only, files-only, trash-based both, and permanent both cleanup modes.
 - Prefer dry-run and explicit confirmation before deletion.

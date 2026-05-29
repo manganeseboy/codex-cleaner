@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Added automatic repair for common GBK/UTF-8 and Latin-1/UTF-8 mojibake in scanned conversation titles.
+- Stopped treating `AGENTS.md` instruction blocks as conversation titles.
 - Improved English and Chinese README first screens for GitHub discovery and non-technical users.
 - Added promotion materials for Xiaohongshu, community posts, and friend sharing.
 - Added project documentation maps: `PROJECT_BRIEF.md`, `PAGE_MAP.md`, and `DATA_MAP.md`.

@@ -14,7 +14,7 @@ Runtime instructions for Codex. It tells Codex how to scan archived sessions, sh
 
 ## scripts/codex_cleaner.py
 
-Main CLI implementation. It scans local archived sessions and performs dry-run or confirmed cleanup.
+Main CLI implementation. It scans local archived sessions, repairs common mojibake in readable titles, skips technical instruction blocks, and performs dry-run or confirmed cleanup.
 
 ## skills/codex-cleaner/scripts/codex_cleaner.py
 

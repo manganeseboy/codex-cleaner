@@ -9,6 +9,8 @@
 ## Derived Fields
 
 - `Title`: readable conversation title extracted from the first real user message.
+- `Title` repair: common GBK/UTF-8 and Latin-1/UTF-8 mojibake is repaired before display.
+- `Title` filtering: technical context such as environment blocks and `AGENTS.md` instructions is skipped.
 - `Workspace`: local project path associated with the archived session.
 - `Size`: approximate workspace size.
 - `File count`: number of files under the workspace.
